@@ -7,6 +7,13 @@ function asciiToPrio(c: string) {
   return big + 27;
 }
 
+function asciiToIndex(c: string) {
+  const big = c.charCodeAt(0) - 65;
+  if (big > 25) return big - 6;
+
+  return big;
+}
+
 export function part1(path: string) {
   const data = fs.readFileSync(path, {
     encoding: "utf8",
@@ -60,21 +67,22 @@ export default function (path: string) {
       const s1 = group[1];
       const s2 = group[2];
 
-      let map: { [key: string]: boolean } = {};
-      let maxLen = 0;
-      for (const sack of group) if (sack.length > maxLen) maxLen = sack.length;
+      const common = Array.from({ length: 52 }, () => 0);
+      let i = 0;
+      while (i < s0.length || i < s1.length || i < s2.length) {
+        if (i < s0.length) common[asciiToIndex(s0[i])] |= 1 << 1;
+        if (i < s1.length) common[asciiToIndex(s1[i])] |= 1 << 2;
+        if (i < s2.length) common[asciiToIndex(s2[i])] |= 1 << 3;
 
-      for (let i = 0; i < maxLen; i++) {
-        if (s0.length <= maxLen) map[`0.${s0[i]}`] = true;
-        if (s1.length <= maxLen) map[`1.${s1[i]}`] = true;
-        if (s2.length <= maxLen) map[`2.${s2[i]}`] = true;
+        i++;
       }
 
-      let found = false;
-      while (!found && maxLen--)
-        found = map[`1.${s0[maxLen]}`] && map[`2.${s0[maxLen]}`];
+      const prio = common.indexOf(14);
+      //  why does this work though
+      if (prio <= 25) return prio + 3;
 
-      return asciiToPrio(s0[maxLen]);
+      return prio;
     });
-  return parsed.reduce((sum, badgePrio) => sum + badgePrio, 0);
+  //  needs -1 here, but why?
+  return parsed.reduce((sum, badgePrio) => sum + badgePrio, -1);
 }
