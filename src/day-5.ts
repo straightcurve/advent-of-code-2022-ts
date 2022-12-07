@@ -80,26 +80,12 @@ export default function (path: string) {
   data
     .split("\n")
     .filter((str) => str.length)
-    .forEach((stuff) => {
-      const parseValue = (str: string) => {
-        const value = str.slice(0, 3);
-        if (value[0] === "[") return { value: value[1], left: str.slice(3) };
-        return { value: null, left: str.slice(3) };
-      };
-
+    .forEach((line) => {
       const parseValues = (str: string) => {
-        let left = str;
-        let stackIdx = 0;
-
-        while (left.length && left[0] !== "\n") {
-          if (!stacks[stackIdx]) stacks[stackIdx] = [];
-          const result = parseValue(left);
-          if (result.value) stacks[stackIdx].unshift(result.value);
-          left = result.left;
-
-          //  consume single whitespace
-          left = left.slice(1);
-          stackIdx++;
+        for (let i = 1; i < str.length; i += 4) {
+          const stackIndex = (i - 1) / 4;
+          if (!stacks[stackIndex]) stacks[stackIndex] = [];
+          if (str[i] !== " ") stacks[stackIndex].unshift(str[i]);
         }
       };
 
@@ -117,12 +103,12 @@ export default function (path: string) {
         while (tempCount--) stacks[to].push(buffer.pop() || "__invalid__");
       };
 
-      if (stuff.at(1) === "1") mode = ParseMode.StackNo;
-      else if (stuff.at(0) === "m") mode = ParseMode.Instruction;
+      if (line.at(1) === "1") mode = ParseMode.StackNo;
+      else if (line.at(0) === "m") mode = ParseMode.Instruction;
 
       switch (mode) {
         case ParseMode.Value: {
-          parseValues(stuff);
+          parseValues(line);
           break;
         }
         case ParseMode.StackNo: {
@@ -130,7 +116,7 @@ export default function (path: string) {
           break;
         }
         case ParseMode.Instruction: {
-          parseInstruction(stuff);
+          parseInstruction(line);
           break;
         }
       }
