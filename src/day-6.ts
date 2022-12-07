@@ -1,12 +1,8 @@
 import fs from "fs";
 
-function parseMessage(
-  input: string,
-  length: number,
-  options?: { buffer: string[]; count: number }
-) {
-  const buffer = options?.buffer ?? [];
-  let count = options?.count ?? 0;
+function parseMessage(input: string, length: number) {
+  const buffer = [];
+  let count = 0;
 
   for (const char of input) {
     buffer.push(char);
@@ -45,6 +41,5 @@ export default function (path: string) {
     encoding: "utf8",
   });
 
-  const result = parseMessage(data, 4);
-  return parseMessage(data.slice(result.count), 14, result).count;
+  return parseMessage(data, 14).count;
 }
