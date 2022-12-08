@@ -10,6 +10,7 @@
 [DAY 5]: ZBDRNPMVH | WDLPFNNNB
 [DAY 6]: 1300 | 3986
 [DAY 7]: 1443806 | 942298
+[DAY 8]: 1782 | 474606
 
 # so much for improvement :facepalm:
 # was fun tho

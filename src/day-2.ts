@@ -27,13 +27,16 @@ export function part1(path: string) {
   const data = fs.readFileSync(path, {
     encoding: "utf8",
   });
-  const parsed = data.split("\n").map((str) => {
-    const split = str.split(" ");
-    return getScorePart1(
-      split[1].charCodeAt(0) - 88,
-      split[0].charCodeAt(0) - 65
-    );
-  });
+  const parsed = data
+    .split("\n")
+    .filter((s) => s.length)
+    .map((str) => {
+      const split = str.split(" ");
+      return getScorePart1(
+        split[1].charCodeAt(0) - 88,
+        split[0].charCodeAt(0) - 65
+      );
+    });
   return parsed.reduce((totalScore, score) => totalScore + score, 0);
 }
 
