@@ -1,10 +1,8 @@
 import fs from "fs";
 
-function asciiToPrio(c: string) {
-  const big = c.charCodeAt(0) - 65;
-  if (big > 25) return big - 31;
-
-  return big + 27;
+function indexToPrio(i: number) {
+  if (i > 25) return i - 25;
+  return i + 27;
 }
 
 function asciiToIndex(c: string) {
@@ -18,28 +16,28 @@ export function part1(path: string) {
   const data = fs.readFileSync(path, {
     encoding: "utf8",
   });
-  const parsed = data.split("\n").map((pRucksack) => {
-    const rucksack = {
-      compartments: [
-        pRucksack.slice(0, pRucksack.length / 2),
-        pRucksack.slice(pRucksack.length / 2),
-      ],
-      sum: 0,
-    };
-    let both: { [key: string]: boolean } = {};
+  const parsed = data
+    .split("\n")
+    .filter((s) => s.length)
+    .map((rucksack) => {
+      const s0 = rucksack.slice(0, rucksack.length / 2);
+      const s1 = rucksack.slice(rucksack.length / 2);
 
-    for (const fItem of rucksack.compartments[0]) {
-      for (const sItem of rucksack.compartments[1]) {
-        if (!both[fItem] && fItem === sItem) {
-          both[fItem] = true;
-          rucksack.sum += asciiToPrio(fItem);
-        }
+      const common = Array.from({ length: 52 }, () => 0);
+      let i = 0;
+      while (i < s0.length || i < s1.length) {
+        if (i < s0.length) common[asciiToIndex(s0[i])] |= 1 << 1;
+        if (i < s1.length) common[asciiToIndex(s1[i])] |= 1 << 2;
+
+        i++;
       }
-    }
 
-    return rucksack;
-  });
-  return parsed.reduce((sum, rucksack) => sum + rucksack.sum, 0);
+      let sum = 0;
+      for (let i = 0; i < common.length; i++)
+        if (common[i] === 6) sum += indexToPrio(i);
+      return sum;
+    });
+  return parsed.reduce((sum, itemsPrios) => sum + itemsPrios, 0);
 }
 
 function getNextGroup(groups: string[][]) {
@@ -79,6 +77,7 @@ export default function (path: string) {
 
       const prio = common.indexOf(14);
       //  why does this work though
+      //  27 - 25 + 1
       if (prio <= 25) return prio + 3;
 
       return prio;
