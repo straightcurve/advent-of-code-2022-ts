@@ -1,6 +1,6 @@
 import { join } from "path";
 
-for (const day of Array.from({ length: 8 }, (v, i) => i + 1)) {
+for (const day of Array.from({ length: 9 }, (v, i) => i + 1)) {
   const path = join(__dirname, `../__tests__/day-${day}.input.txt`);
   const run = require(`./day-${day}`).default;
   const { part1 } = require(`./day-${day}`);
