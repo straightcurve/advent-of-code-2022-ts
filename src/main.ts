@@ -1,10 +1,19 @@
 import { join } from "path";
 
-for (const day of Array.from({ length: 9 }, (v, i) => i + 1)) {
+for (const day of Array.from({ length: 10 }, (v, i) => i + 1)) {
   const path = join(__dirname, `../__tests__/day-${day}.input.txt`);
   const run = require(`./day-${day}`).default;
   const { part1 } = require(`./day-${day}`);
-  console.log(`[DAY ${day}]:`, part1(path), "|", run(path));
+
+  switch (day) {
+    case 10:
+      console.log(`[DAY ${day}]:`, part1(path), "|");
+      console.log(run(path));
+      break;
+    default:
+      console.log(`[DAY ${day}]:`, part1(path), "|", run(path));
+      break;
+  }
 
   if (day === 7) {
     const {
